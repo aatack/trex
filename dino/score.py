@@ -43,8 +43,8 @@ def collect_digit_images(n):
     raw_score_captures = RawScoreCapturer()
 
     for _ in range(n):
-        raw = raw_score_captures.captures[-1].capture()
-        digits.append(images.greyscale(raw))
+        raw = raw_score_captures.capture()[-1]
+        digits.append(raw)
         time.sleep(0.1)
 
     for digit in digits:

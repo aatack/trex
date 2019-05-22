@@ -87,3 +87,8 @@ def load_autoencoder(name):
     """Load an autoencoder and compile it for training."""
     autoencoder = reduction.load_autoencoder(name)
     return autoencoder
+
+
+def format_frame_vector(frame):
+    """Format a frame vector into a matrix so it can be displayed."""
+    return np.reshape(frame, (26, 149))
