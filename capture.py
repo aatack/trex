@@ -39,3 +39,13 @@ class CaptureGroup(Capture):
     def capture(self):
         """Capture some aspect of the current state of the computer."""
         return {k: v.capture() for k, v in self.captures.items()}
+
+
+class CaptureList(Capture):
+    def __init__(self, *args):
+        """Capture an ordered list of different state features at once."""
+        self.captures = args
+
+    def capture(self):
+        """Capture some aspect of the current state of the computer."""
+        return [capture.capture() for capture in self.captures]

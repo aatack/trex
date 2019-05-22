@@ -14,7 +14,7 @@ def pixels(image, normalise=True):
     return base_array / 256 if normalise else base_array
 
 
-def greyscale(image):
+def greyscale(image, normalise=True):
     """Convert the given image to greyscale."""
-    px = pixels(image)
+    px = pixels(image, normalise=normalise)
     return 0.299 * px[:, :, 0] + 0.587 * px[:, :, 1] + 0.114 * px[:, :, 2]
