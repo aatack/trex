@@ -1,47 +1,46 @@
-from keras.layers import Dense
+from keras.layers import Dense, Flatten
 from keras.models import Sequential, load_model
+import os
 
 
-def make_encoder(feature_shape, latent_shape, inner_layers, latent_activation="tanh"):
+def make_encoder(
+    feature_dimension, latent_dimension, inner_layers, latent_activation="tanh"
+):
     """Create an encoder."""
     encoder = Sequential()
     first_layer = True
+
     for units, activation in (
         inner_layers if isinstance(inner_layers, list) else [inner_layers]
-    ) + [(latent_shape, latent_activation)]:
+    ) + [(latent_dimension, latent_activation)]:
         if first_layer:
-            encoder.add(
-                Dense(
-                    units,
-                    activation=activation,
-                    input_shape=(
-                        (feature_shape,)
-                        if isinstance(feature_shape, int)
-                        else feature_shape
-                    ),
-                )
-            )
             first_layer = False
+            encoder.add(
+                Dense(units, activation=activation, input_shape=(feature_dimension,))
+            )
         else:
             encoder.add(Dense(units, activation=activation))
     return encoder
 
 
 def make_decoder(
-    latent_shape, feature_shape, inner_layers, reconstruction_activation="sigmoid"
+    latent_dimension,
+    feature_dimension,
+    inner_layers,
+    reconstruction_activation="sigmoid",
 ):
     """Create a decoder."""
     return make_encoder(
-        latent_shape,
-        feature_shape,
+        latent_dimension,
+        feature_dimension,
         inner_layers,
         latent_activation=reconstruction_activation,
     )
 
 
 def make_mirrored_autoencoder(
-    feature_shape,
-    latent_shape,
+    feature_dimension,
+    latent_dimension,
     inner_layers,
     inner_activation="relu",
     latent_activation="tanh",
@@ -55,11 +54,11 @@ def make_mirrored_autoencoder(
         )
     ]
     encoder = make_encoder(
-        feature_shape, latent_shape, layers, latent_activation=latent_activation
+        feature_dimension, latent_dimension, layers, latent_activation=latent_activation
     )
     decoder = make_decoder(
-        latent_shape,
-        feature_shape,
+        latent_dimension,
+        feature_dimension,
         layers[::-1],
         reconstruction_activation=reconstruction_activation,
     )
@@ -74,12 +73,18 @@ def save_autoencoder(autoencoder, name):
 
 def save_encoder(encoder, name):
     """Save the given encoder."""
-    encoder.save("data/models/{}/encoder.h5".format(name))
+    directory = "data/models/{}/".format(name)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    encoder.save(directory + "encoder.h5")
 
 
 def save_decoder(decoder, name):
     """Save the given decoder."""
-    decoder.save("data/models/{}/decoder.h5".format(name))
+    directory = "data/models/{}/".format(name)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    decoder.save(directory + "decoder.h5")
 
 
 def load_autoencoder(name):
@@ -97,3 +102,13 @@ def load_encoder(name, trainable=True):
 def load_decoder(name):
     """Load a decoder."""
     return load_model("data/models/{}/decoder.h5".format(name))
+
+
+def product(values):
+    """Calculate the product of a list or tuple of integers."""
+    if isinstance(values, int):
+        return values
+    total = 1
+    for value in values:
+        total *= value
+    return total

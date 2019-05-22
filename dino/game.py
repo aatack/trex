@@ -3,6 +3,7 @@ import images
 import pickle
 import dino.score as score
 import numpy as np
+import reduction
 
 
 class RawGameCapturer(capture.Capture):
@@ -44,7 +45,8 @@ def get_raw_footage_location():
 def save_raw_footage(frames):
     """Saves raw footage as a tensor under data/raw_frames.obj."""
     file_handler = open(get_raw_footage_location(), "wb")
-    pickle.dump(np.array(frames), file_handler)
+    numpy_frames = np.array(frames)
+    pickle.dump(np.reshape(numpy_frames, [numpy_frames.shape[0], -1]), file_handler)
     file_handler.close()
 
 
@@ -73,3 +75,15 @@ def await_game_finish(frames, backlog):
             if mean == 0.0:
                 print("Game finished.")
                 return None
+
+
+def create_autoencoder(name):
+    """Create an autoencoder for compressing game frames."""
+    autoencoder = reduction.make_mirrored_autoencoder(26 * 149, 10, [128])
+    reduction.save_autoencoder(autoencoder, name)
+
+
+def load_autoencoder(name):
+    """Load an autoencoder and compile it for training."""
+    autoencoder = reduction.load_autoencoder(name)
+    return autoencoder
