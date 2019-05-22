@@ -29,3 +29,13 @@ class KeyState(Capture):
     def capture(self):
         """Capture some aspect of the current state of the computer."""
         return keyboard.is_pressed(self.key)
+
+
+class CaptureGroup(Capture):
+    def __init__(self, **kwargs):
+        """Capture a number of different state features all in one."""
+        self.captures = kwargs
+
+    def capture(self):
+        """Capture some aspect of the current state of the computer."""
+        return {k: v.capture() for k, v in self.captures.items()}
