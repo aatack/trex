@@ -38,11 +38,11 @@ def collect_raw_footage(backlog_size=10):
 
 def get_raw_footage_location():
     """Return the location of the raw footage save file."""
-    return "data/rawframes.obj"
+    return "data/raw_frames.obj"
 
 
 def save_raw_footage(frames):
-    """Saves raw footage as a tensor under data/rawframes.obj."""
+    """Saves raw footage as a tensor under data/raw_frames.obj."""
     file_handler = open(get_raw_footage_location(), "wb")
     pickle.dump(np.array(frames), file_handler)
     file_handler.close()
