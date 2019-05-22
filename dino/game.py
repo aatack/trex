@@ -77,9 +77,11 @@ def await_game_finish(frames, backlog):
                 return None
 
 
-def create_autoencoder(name):
+def create_autoencoder(name, latent_dimension, layers):
     """Create an autoencoder for compressing game frames."""
-    autoencoder = reduction.make_mirrored_autoencoder(26 * 149, 10, [128])
+    autoencoder = reduction.make_mirrored_autoencoder(
+        26 * 149, latent_dimension, layers
+    )
     reduction.save_autoencoder(autoencoder, name)
 
 
@@ -92,3 +94,6 @@ def load_autoencoder(name):
 def format_frame_vector(frame):
     """Format a frame vector into a matrix so it can be displayed."""
     return np.reshape(frame, (26, 149))
+
+
+save_autoencoder = reduction.save_autoencoder
