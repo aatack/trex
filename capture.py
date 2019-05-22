@@ -2,6 +2,33 @@ import pyautogui as pg
 import keyboard
 
 
+class CaptureBacklog:
+    def __init__(self, capturer, backlog):
+        """Creates a backlog of the last n time steps of captures."""
+        self.capturer = capturer
+        self.backlog = backlog
+        self.full = False
+
+        self.captures = []
+        self.index = 0
+
+    def update(self):
+        """Take a new capture and replace any old ones."""
+        new_capture = self.capturer.capture()
+        if not self.full:
+            self.captures.append(new_capture)
+            self.full = len(self.captures) >= self.backlog
+        else:
+            for i in range(self.backlog - 1):
+                self.captures[i] = self.captures[i + 1]
+            self.captures[-1] = new_capture
+        return new_capture
+
+    def at(self, step):
+        """Index the backlog; 0 is the current step, -1 the one before, and so on."""
+        return self.captures[step - 1]
+
+
 class Capture:
     def capture(self):
         """Capture some aspect of the current state of the computer."""
